@@ -1,4 +1,5 @@
 const express = require("express");
+
 const app = express();
 const mongoose = require("mongoose");
 const mainRouter = require("./routes/index");
@@ -11,6 +12,10 @@ mongoose
     console.log("Connected to DB");
   })
   .catch(console.error);
+
+const routes = require("./routes");
+
+app.use(routes);
 
 app.use(express.json());
 app.use("/", mainRouter);
