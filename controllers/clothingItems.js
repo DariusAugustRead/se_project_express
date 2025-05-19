@@ -1,9 +1,3 @@
-// const okStatusCode = require("../utils/errors");
-// const createdStatusCode = require("../utils/errors");
-// const badRequestStatusCode = require("../utils/errors");
-// const notFoundStatusCode = require("../utils/errors");
-// const serverErrorStatusCode = require("../utils/errors");
-
 const ClothingItem = require("../models/clothingItem");
 
 const createItem = (req, res) => {
@@ -22,4 +16,24 @@ const createItem = (req, res) => {
     });
 };
 
-module.exports = { createItem };
+const getItems = (req, res) => {
+  ClothingItem.find({})
+    .then((items) => res.status(200).send({ data: items }))
+    .catch((e) => {
+      res.status(500).send({ message: "Error from getItems", e });
+    });
+};
+
+const updateItem = (req, res) => {
+  const { itemId } = req.param;
+  const { imageURL } = req.body;
+
+  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageURL } })
+    .orFail()
+    .then((item) => res.status(200).send({ data: item }))
+    .catch((e) => {
+      res.status(500).send({ message: "Error from updateItems", e });
+    });
+};
+
+module.exports = { createItem, getItems, updateItem };
