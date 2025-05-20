@@ -3,12 +3,11 @@ const router = require("express").Router();
 const {
   createItem,
   getItems,
-  updateItem,
+  deleteItem,
 } = require("../controllers/clothingItems");
 
 router.get("/", getItems);
 router.post("/", createItem);
-router.put("/:itemId", updateItem);
-router.delete("/:itemId", () => console.log("DELETE clothing items by ID"));
+router.delete("/:itemId", deleteItem);
 
 module.exports = router;
