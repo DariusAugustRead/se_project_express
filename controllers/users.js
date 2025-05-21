@@ -21,7 +21,7 @@ const getUsers = (req, res) => {
       console.error(err);
       return res
         .status(internalServerStatusCode)
-        .send({ message: err.message });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -33,11 +33,13 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(badRequestStatusCode).send({ message: err.message });
+        return res
+          .status(badRequestStatusCode)
+          .send({ message: "An error has occurred with the request" });
       }
       return res
         .status(internalServerStatusCode)
-        .send({ message: err.message });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -50,14 +52,18 @@ const getUserById = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(notFoundStatusCode).send({ message: err.message });
+        return res
+          .status(notFoundStatusCode)
+          .send({ message: "Document not found" });
       }
       if (err.name === "CastError") {
-        return res.status(badRequestStatusCode).send({ message: err.message });
+        return res
+          .status(badRequestStatusCode)
+          .send({ message: "An error has occurred with the request" });
       }
       return res
         .status(internalServerStatusCode)
-        .send({ message: err.message });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
