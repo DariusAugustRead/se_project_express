@@ -27,9 +27,7 @@ module.exports.likeItem = (req, res) =>
         res.status(notFoundStatusCode).send({ message: "Document not found" });
       }
       if (err.name === "CastError") {
-        res
-          .status(badRequestStatusCode)
-          .send({ message: "An error has occurred with the request" });
+        res.status(badRequestStatusCode).send({ message: "Invalid parameter" });
       }
       res
         .status(internalServerStatusCode)
@@ -49,9 +47,7 @@ module.exports.dislikeItem = (req, res) =>
         res.status(notFoundStatusCode).send({ message: "Document not found" });
       }
       if (err.name === "CastError") {
-        res
-          .status(badRequestStatusCode)
-          .send({ message: "An error has occurred with the request" });
+        res.status(badRequestStatusCode).send({ message: "Invalid parameter" });
       }
       res
         .status(internalServerStatusCode)

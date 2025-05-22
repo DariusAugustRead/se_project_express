@@ -23,9 +23,7 @@ const createItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res
-          .status(badRequestStatusCode)
-          .send({ message: "An error has occurred with the request" });
+        res.status(badRequestStatusCode).send({ message: "Invalid data" });
       }
       res
         .status(internalServerStatusCode)
@@ -52,9 +50,7 @@ const deleteItem = (req, res) => {
         res.status(notFoundStatusCode).send({ message: "Document not found" });
       }
       if (err.name === "CastError") {
-        res
-          .status(badRequestStatusCode)
-          .send({ message: "An error has occurred with the request" });
+        res.status(badRequestStatusCode).send({ message: "Invalid data" });
       }
       res
         .status(internalServerStatusCode)

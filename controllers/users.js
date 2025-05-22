@@ -35,7 +35,7 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res
           .status(badRequestStatusCode)
-          .send({ message: "An error has occurred with the request" });
+          .send({ message: "Invalid data" });
       }
       return res
         .status(internalServerStatusCode)
@@ -59,7 +59,7 @@ const getUserById = (req, res) => {
       if (err.name === "CastError") {
         return res
           .status(badRequestStatusCode)
-          .send({ message: "An error has occurred with the request" });
+          .send({ message: "Invalid parameter" });
       }
       return res
         .status(internalServerStatusCode)
