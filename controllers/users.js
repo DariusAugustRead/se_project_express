@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+
 const {
   OK_STATUS_CODE,
   CREATED_STATUS_CODE,
@@ -26,9 +28,22 @@ const getUsers = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-
-  User.create({ name, avatar })
+  // const { name, avatar, email, password } = req.body;
+  //  User.create({ name, avatar, email, password });
+  bcrypt
+    .hash(req.body.password, 10, (err, hash) => {
+      if (err) {
+      }
+    })
+    .orFail()
+    .then((hash) =>
+      User.create({
+        name: req.body.name,
+        avatar: req.body.avatar,
+        email: req.body.email,
+        password: hash,
+      })
+    )
     .then((user) => res.status(createdStatusCode).send(user))
     .catch((err) => {
       console.error(err);
