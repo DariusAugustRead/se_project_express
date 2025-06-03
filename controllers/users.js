@@ -28,19 +28,18 @@ const getUsers = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  // const { name, avatar, email, password } = req.body;
+  const { name, avatar, email, password } = req.body;
   //  User.create({ name, avatar, email, password });
+  if (!email || !password) {
+    res.status(badRequestStatusCode).send({ message: "Invalid data" });
+  }
   bcrypt
-    .hash(req.body.password, 10, (err, hash) => {
-      if (err) {
-      }
-    })
-    .orFail()
+    .hash(password, 10)
     .then((hash) =>
       User.create({
-        name: req.body.name,
-        avatar: req.body.avatar,
-        email: req.body.email,
+        name,
+        avatar,
+        email,
         password: hash,
       })
     )
@@ -82,4 +81,13 @@ const getUserById = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getUserById, createUser };
+const login = (req, res) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => res.status(createdStatusCode).send(user))
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
+};
+
+module.exports = { getUsers, getUserById, createUser, login };
