@@ -1,9 +1,12 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const secretKey = require("../utils/config");
 
 const {
   OK_STATUS_CODE,
   CREATED_STATUS_CODE,
   BAD_REQUEST_STATUS_CODE,
+  UNAUTHORIZED_STATUS_CODE,
   NOT_FOUND_STATUS_CODE,
   INTERNAL_SERVER_ERROR_STATUS_CODE,
 } = require("../utils/errors");
@@ -11,6 +14,7 @@ const {
 const okStatusCode = OK_STATUS_CODE;
 const createdStatusCode = CREATED_STATUS_CODE;
 const badRequestStatusCode = BAD_REQUEST_STATUS_CODE;
+const unauthorizedStatusCode = UNAUTHORIZED_STATUS_CODE;
 const notFoundStatusCode = NOT_FOUND_STATUS_CODE;
 const internalServerStatusCode = INTERNAL_SERVER_ERROR_STATUS_CODE;
 
@@ -29,7 +33,6 @@ const getUsers = (req, res) => {
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
-  //  User.create({ name, avatar, email, password });
   if (!email || !password) {
     res.status(badRequestStatusCode).send({ message: "Invalid data" });
   }
@@ -57,8 +60,8 @@ const createUser = (req, res) => {
     });
 };
 
-const getUserById = (req, res) => {
-  const { userId } = req.params;
+const getCurrentUser = (req, res) => {
+  const { userId } = req.user;
 
   User.findById(userId)
     .orFail()
@@ -84,10 +87,16 @@ const getUserById = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
-    .then((user) => res.status(createdStatusCode).send(user))
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, secretKey, {
+        expiresIn: "7d",
+      });
+      res.status(createdStatusCode).send(user);
+      res.send({ token });
+    })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      res.status(unauthorizedStatusCode).send({ message: err.message });
     });
 };
 
-module.exports = { getUsers, getUserById, createUser, login };
+module.exports = { getUsers, getCurrentUser, createUser, login };
