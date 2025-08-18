@@ -35,6 +35,7 @@ const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
     res.status(badRequestStatusCode).send({ message: "Invalid data" });
+    return;
   }
   bcrypt
     .hash(password, 10)
@@ -46,7 +47,11 @@ const createUser = (req, res) => {
         password: hash,
       })
     )
-    .then((user) => res.status(createdStatusCode).send(user))
+    .then((user) => {
+      const userObj = user.toObject();
+      delete userObj.password;
+      res.status(createdStatusCode).send(userObj);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -91,8 +96,7 @@ const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, secretKey, {
         expiresIn: "7d",
       });
-      res.status(createdStatusCode).send(user);
-      res.send({ token });
+      res.status(createdStatusCode).send({ user, token });
     })
     .catch((err) => {
       res.status(unauthorizedStatusCode).send({ message: err.message });
