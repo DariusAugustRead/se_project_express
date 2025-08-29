@@ -2,6 +2,7 @@ const {
   OK_STATUS_CODE,
   // CREATED_STATUS_CODE,
   BAD_REQUEST_STATUS_CODE,
+  UNAUTHORIZED_STATUS_CODE,
   NOT_FOUND_STATUS_CODE,
   INTERNAL_SERVER_ERROR_STATUS_CODE,
 } = require("../utils/errors");
@@ -9,6 +10,7 @@ const {
 const okStatusCode = OK_STATUS_CODE;
 // const createdStatusCode = CREATED_STATUS_CODE;
 const badRequestStatusCode = BAD_REQUEST_STATUS_CODE;
+const unauthorizedStatusCode =  UNAUTHORIZED_STATUS_CODE
 const notFoundStatusCode = NOT_FOUND_STATUS_CODE;
 const internalServerStatusCode = INTERNAL_SERVER_ERROR_STATUS_CODE;
 
@@ -42,21 +44,27 @@ const getItems = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  ClothingItem.findByIdAndDelete(req.params.itemId)
+  ClothingItem.findById(req.params.itemId)
     .orFail()
-    .then((item) => res.status(okStatusCode).send({ data: item }))
+    .then((item) => {
+      if (item.owner.toString() !== req.user._id) {
+        return res.status(unauthorizedStatusCode).send({ message: "Unauthorized: You do not own this item" });
+      }
+
+      return ClothingItem.findByIdAndDelete(req.params.itemId)
+        .then((deletedItem) => res.status(okStatusCode).send({ data: deletedItem }));
+    })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
         res.status(notFoundStatusCode).send({ message: "Document not found" });
-      }
-      if (err.name === "CastError") {
+      } else if (err.name === "CastError") {
         res.status(badRequestStatusCode).send({ message: "Invalid data" });
+      } else {
+        res.status(internalServerStatusCode).send({ message: "An error has occurred on the server" });
       }
-      res
-        .status(internalServerStatusCode)
-        .send({ message: "An error has occurred on the server" });
     });
 };
+
 
 // const updateItem = (req, res) => {
 //   const { itemId } = req.param;
