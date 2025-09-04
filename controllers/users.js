@@ -20,17 +20,6 @@ const internalServerStatusCode = INTERNAL_SERVER_ERROR_STATUS_CODE;
 
 const User = require("../models/user");
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(okStatusCode).send(users))
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(internalServerStatusCode)
-        .send({ message: "An error has occurred on the server" });
-    });
-};
-
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
@@ -100,16 +89,19 @@ const login = (req, res) => {
       res.status(createdStatusCode).send({ token });
     })
     .catch((err) => {
-      res.status(unauthorizedStatusCode).send({ message: err.message });
+      if (err.message === "Incorrect email or password") {
+       return res.status(unauthorizedStatusCode).send({ message: err.message })
+      }
+      return res.status(internalServerStatusCode).send({message: "Internal server error"})
     });
 };
 
 const updateCurrentUser = (req, res) => {
   const { name, avatar } = req.body;
-  const { userId } = req.user;
+  const { _id } = req.user;
 
   User.findByIdAndUpdate(
-    userId,
+    _id,
     { name, avatar },
     { new: true, runValidators: true }
   )
@@ -134,4 +126,4 @@ const updateCurrentUser = (req, res) => {
 };
 
 
-module.exports = { getUsers, getCurrentUser, createUser, login, updateCurrentUser };
+module.exports = { getCurrentUser, createUser, login, updateCurrentUser };

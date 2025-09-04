@@ -1,6 +1,5 @@
 const {
   OK_STATUS_CODE,
-  // CREATED_STATUS_CODE,
   BAD_REQUEST_STATUS_CODE,
   UNAUTHORIZED_STATUS_CODE,
   NOT_FOUND_STATUS_CODE,
@@ -8,7 +7,6 @@ const {
 } = require("../utils/errors");
 
 const okStatusCode = OK_STATUS_CODE;
-// const createdStatusCode = CREATED_STATUS_CODE;
 const badRequestStatusCode = BAD_REQUEST_STATUS_CODE;
 const unauthorizedStatusCode =  UNAUTHORIZED_STATUS_CODE
 const notFoundStatusCode = NOT_FOUND_STATUS_CODE;
@@ -25,9 +23,9 @@ const createItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(badRequestStatusCode).send({ message: "Invalid data" });
+        return res.status(badRequestStatusCode).send({ message: "Invalid data" });
       }
-      res
+      return res
         .status(internalServerStatusCode)
         .send({ message: "Error from createItem" });
     });
@@ -64,18 +62,5 @@ const deleteItem = (req, res) => {
       }
     });
 };
-
-
-// const updateItem = (req, res) => {
-//   const { itemId } = req.param;
-//   const { imageUrl } = req.body;
-
-//   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-//     .orFail()
-//     .then((item) => res.status(okStatusCode).send({ data: item }))
-//     .catch((e) => {
-//       res.status(internalServerStatusCode).send({ message: "Error from updateItems"});
-//     });
-// };
 
 module.exports = { createItem, getItems, deleteItem };

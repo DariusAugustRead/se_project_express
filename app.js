@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const auth = require("./middlewares/auth");
 const mainRouter = require("./routes/index");
 
 const app = express();
@@ -23,7 +22,6 @@ app.use(cors());
 app.post("/signin", login);
 app.post("/signup", createUser);
 
-app.use(auth);
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {

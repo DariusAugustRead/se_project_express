@@ -24,12 +24,12 @@ module.exports.likeItem = (req, res) =>
     .then((item) => res.status(okStatusCode).send({ data: item }))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        res.status(notFoundStatusCode).send({ message: "Document not found" });
+        return res.status(notFoundStatusCode).send({ message: "Document not found" });
       }
       if (err.name === "CastError") {
-        res.status(badRequestStatusCode).send({ message: "Invalid parameter" });
+        return res.status(badRequestStatusCode).send({ message: "Invalid parameter" });
       }
-      res
+      return res
         .status(internalServerStatusCode)
         .send({ message: "An error has occurred on the server" });
     });
@@ -44,12 +44,12 @@ module.exports.dislikeItem = (req, res) =>
     .then((item) => res.status(okStatusCode).send({ data: item }))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        res.status(notFoundStatusCode).send({ message: "Document not found" });
+        return res.status(notFoundStatusCode).send({ message: "Document not found" });
       }
       if (err.name === "CastError") {
-        res.status(badRequestStatusCode).send({ message: "Invalid parameter" });
+        return res.status(badRequestStatusCode).send({ message: "Invalid parameter" });
       }
-      res
+      return res
         .status(internalServerStatusCode)
         .send({ message: "An error has occurred on the server" });
     });

@@ -13,6 +13,6 @@ router.get("/", getItems);
 router.post("/", auth, createItem);
 router.delete("/:itemId", auth, deleteItem);
 router.put("/:itemId/likes", auth, likeItem);
-router.delete("/items/:itemId/likes", auth, dislikeItem);
+router.delete("/:itemId/likes", auth, dislikeItem);
 
 module.exports = router;
