@@ -1,14 +1,14 @@
 const {
   OK_STATUS_CODE,
   BAD_REQUEST_STATUS_CODE,
-  UNAUTHORIZED_STATUS_CODE,
+  FORBIDDEN_STATUS_CODE,
   NOT_FOUND_STATUS_CODE,
   INTERNAL_SERVER_ERROR_STATUS_CODE,
 } = require("../utils/errors");
 
 const okStatusCode = OK_STATUS_CODE;
 const badRequestStatusCode = BAD_REQUEST_STATUS_CODE;
-const unauthorizedStatusCode =  UNAUTHORIZED_STATUS_CODE
+const forbiddenStatusCode = FORBIDDEN_STATUS_CODE;
 const notFoundStatusCode = NOT_FOUND_STATUS_CODE;
 const internalServerStatusCode = INTERNAL_SERVER_ERROR_STATUS_CODE;
 
@@ -46,7 +46,7 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== req.user._id) {
-        return res.status(unauthorizedStatusCode).send({ message: "Unauthorized: You do not own this item" });
+        return res.status(forbiddenStatusCode).send({ message: "Forbidden: Your access is not permitted" });
       }
 
       return ClothingItem.findByIdAndDelete(req.params.itemId)

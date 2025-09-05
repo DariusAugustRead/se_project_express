@@ -81,12 +81,15 @@ const getCurrentUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(badRequestStatusCode).send({message: "Email and password are required"})
+  }
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, secretKey, {
         expiresIn: "7d",
       });
-      res.status(createdStatusCode).send({ token });
+      res.status(okStatusCode).send({ token });
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
