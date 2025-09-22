@@ -78,25 +78,34 @@ const getCurrentUser = (req, res) => {
     });
 };
 
-
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(badRequestStatusCode).send({message: "Email and password are required"})
+    return res
+      .status(badRequestStatusCode)
+      .send({ message: "Email and password are required" });
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, secretKey, {
         expiresIn: "7d",
       });
-      res.status(okStatusCode).send({ token });
+      res.status(okStatusCode).send({ token, user });
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
-       return res.status(unauthorizedStatusCode).send({ message: err.message })
+        return res
+          .status(unauthorizedStatusCode)
+          .send({ message: err.message });
       }
-      return res.status(internalServerStatusCode).send({message: "Internal server error"})
+      return res
+        .status(internalServerStatusCode)
+        .send({ message: "Internal server error" });
     });
+};
+
+const logout = (req, res) => {
+  return res.status(okStatusCode).send({ message: "Logged out successfully" });
 };
 
 const updateCurrentUser = (req, res) => {
@@ -128,5 +137,10 @@ const updateCurrentUser = (req, res) => {
     });
 };
 
-
-module.exports = { getCurrentUser, createUser, login, updateCurrentUser };
+module.exports = {
+  getCurrentUser,
+  createUser,
+  login,
+  logout,
+  updateCurrentUser,
+};

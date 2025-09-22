@@ -1,5 +1,6 @@
 const {
   OK_STATUS_CODE,
+  CREATED_STATUS_CODE,
   BAD_REQUEST_STATUS_CODE,
   FORBIDDEN_STATUS_CODE,
   NOT_FOUND_STATUS_CODE,
@@ -7,6 +8,7 @@ const {
 } = require("../utils/errors");
 
 const okStatusCode = OK_STATUS_CODE;
+const createdStatusCode = CREATED_STATUS_CODE;
 const badRequestStatusCode = BAD_REQUEST_STATUS_CODE;
 const forbiddenStatusCode = FORBIDDEN_STATUS_CODE;
 const notFoundStatusCode = NOT_FOUND_STATUS_CODE;
@@ -19,11 +21,14 @@ const createItem = (req, res) => {
 
   ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => {
-      res.send({ data: item });
+      res.status(createdStatusCode).send({ data: item });
     })
     .catch((err) => {
+      console.error("CreateItem error:", err);
       if (err.name === "ValidationError") {
-        return res.status(badRequestStatusCode).send({ message: "Invalid data" });
+        return res
+          .status(badRequestStatusCode)
+          .send({ message: "Invalid data" });
       }
       return res
         .status(internalServerStatusCode)
@@ -46,11 +51,14 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== req.user._id) {
-        return res.status(forbiddenStatusCode).send({ message: "Forbidden: Your access is not permitted" });
+        return res
+          .status(forbiddenStatusCode)
+          .send({ message: "Forbidden: Your access is not permitted" });
       }
 
-      return ClothingItem.findByIdAndDelete(req.params.itemId)
-        .then((deletedItem) => res.status(okStatusCode).send({ data: deletedItem }));
+      return ClothingItem.findByIdAndDelete(req.params.itemId).then(
+        (deletedItem) => res.status(okStatusCode).send({ data: deletedItem })
+      );
     })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
@@ -58,7 +66,9 @@ const deleteItem = (req, res) => {
       } else if (err.name === "CastError") {
         res.status(badRequestStatusCode).send({ message: "Invalid data" });
       } else {
-        res.status(internalServerStatusCode).send({ message: "An error has occurred on the server" });
+        res
+          .status(internalServerStatusCode)
+          .send({ message: "An error has occurred on the server" });
       }
     });
 };

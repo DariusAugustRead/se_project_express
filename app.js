@@ -19,6 +19,9 @@ mongoose
 app.use(express.json());
 app.use(cors());
 
+const clothingItemsRouter = require("./routes/clothingItems");
+app.use("/items", clothingItemsRouter);
+
 app.post("/signin", login);
 app.post("/signup", createUser);
 

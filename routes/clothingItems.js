@@ -1,13 +1,15 @@
 const router = require("express").Router();
-const auth = require("../middlewares/auth")
+const auth = require("../middlewares/auth");
 
 const {
   createItem,
   getItems,
-  deleteItem
+  deleteItem,
 } = require("../controllers/clothingItems");
 
-const {  likeItem, dislikeItem } = require('../controllers/likes')
+const { likeItem, dislikeItem } = require("../controllers/likes");
+
+console.log("✅ clothingItemsRouter file loaded");
 
 router.get("/", getItems);
 router.post("/", auth, createItem);
