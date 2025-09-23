@@ -37,6 +37,8 @@ const createItem = (req, res) => {
 };
 
 const getItems = (req, res) => {
+  console.log("GET /items route hit");
+
   ClothingItem.find({})
     .then((items) => res.status(okStatusCode).send({ data: items }))
     .catch(() => {

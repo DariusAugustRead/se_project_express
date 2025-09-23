@@ -4,9 +4,6 @@ const mongoose = require("mongoose");
 const mainRouter = require("./routes/index");
 
 const app = express();
-
-const { createUser, login } = require("./controllers/users");
-
 const { PORT = 3001 } = process.env;
 
 mongoose
@@ -14,16 +11,12 @@ mongoose
   .then(() => {
     console.log("Connected to DB");
   })
-  .catch(console.error);
+  .catch((err) => {
+    console.error(err);
+  });
 
 app.use(express.json());
 app.use(cors());
-
-const clothingItemsRouter = require("./routes/clothingItems");
-app.use("/items", clothingItemsRouter);
-
-app.post("/signin", login);
-app.post("/signup", createUser);
 
 app.use("/", mainRouter);
 

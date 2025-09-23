@@ -22,6 +22,8 @@ const User = require("../models/user");
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
+  console.log("Incoming signup payload:", req.body);
+
   if (!email || !password) {
     res.status(badRequestStatusCode).send({ message: "Invalid data" });
     return;
