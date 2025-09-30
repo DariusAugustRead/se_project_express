@@ -75,4 +75,38 @@ const deleteItem = (req, res) => {
     });
 };
 
-module.exports = { createItem, getItems, deleteItem };
+const likeItem = async (req, res) => {
+  try {
+    await ClothingItem.findByIdAndUpdate(req.params.itemId, {
+      $addToSet: { likes: req.user._id },
+    });
+
+    const fullItem = await ClothingItem.findById(req.params.itemId).lean();
+
+    if (!fullItem) {
+      return res.status(404).send({ message: "Item not found" });
+    }
+    res.send(fullItem);
+  } catch (err) {
+    res.status(500).send({ message: "Failed to like item", error: err });
+  }
+};
+
+const dislikeItem = async (req, res) => {
+  try {
+    await ClothingItem.findByIdAndUpdate(req.params.itemId, {
+      $pull: { likes: req.user._id },
+    });
+
+    const fullItem = await ClothingItem.findById(req.params.itemId).lean();
+
+    if (!fullItem) {
+      return res.status(404).send({ message: "Item not found" });
+    }
+    res.send(fullItem);
+  } catch (err) {
+    res.status(500).send({ message: "Failed to like item", error: err });
+  }
+};
+
+module.exports = { createItem, getItems, deleteItem, likeItem, dislikeItem };
