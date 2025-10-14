@@ -6,7 +6,7 @@ This back-end project is focused on creating a server for the WTWR application. 
 
 `npm run start` — to launch the server
 
-`npm run dev` — to launch the server with the hot reload feature
+`npm run dev` — to launch the server with the hot reload feature. You will have to cd (change directory) in the the correct folder and use this command in both the frontend and backend folders
 
 ### Testing
 
@@ -22,5 +22,7 @@ Postman
 MongoDB (Mongoose Database)
 Validator
 Nodemon
+Jest
+Joi
 
 https://github.com/DariusAugustRead/se_project_express.git
