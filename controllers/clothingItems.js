@@ -1,18 +1,7 @@
-const {
-  OK_STATUS_CODE,
-  CREATED_STATUS_CODE,
-  BAD_REQUEST_STATUS_CODE,
-  FORBIDDEN_STATUS_CODE,
-  NOT_FOUND_STATUS_CODE,
-  INTERNAL_SERVER_ERROR_STATUS_CODE,
-} = require("../utils/errors");
+const { OK_STATUS_CODE, CREATED_STATUS_CODE } = require("../utils/errors");
 
 const okStatusCode = OK_STATUS_CODE;
 const createdStatusCode = CREATED_STATUS_CODE;
-const badRequestStatusCode = BAD_REQUEST_STATUS_CODE;
-const forbiddenStatusCode = FORBIDDEN_STATUS_CODE;
-const notFoundStatusCode = NOT_FOUND_STATUS_CODE;
-const internalServerStatusCode = INTERNAL_SERVER_ERROR_STATUS_CODE;
 
 const ClothingItem = require("../models/clothingItem");
 
@@ -26,13 +15,9 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error("CreateItem error:", err);
       if (err.name === "ValidationError") {
-        return res
-          .status(badRequestStatusCode)
-          .send({ message: "Invalid data" });
+        next(new Error("Invalid data"));
       }
-      return res
-        .status(internalServerStatusCode)
-        .send({ message: "Error from createItem" });
+      next(new Error("Error from createItem"));
     });
 };
 
@@ -42,9 +27,7 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(okStatusCode).send({ data: items }))
     .catch(() => {
-      res
-        .status(internalServerStatusCode)
-        .send({ message: "Error from getItems" });
+      next(new Error("Error from getItems"));
     });
 };
 
@@ -53,9 +36,7 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== req.user._id) {
-        return res
-          .status(forbiddenStatusCode)
-          .send({ message: "Forbidden: Your access is not permitted" });
+        next(new Error("Forbidden: Your access is not permitted"));
       }
 
       return ClothingItem.findByIdAndDelete(req.params.itemId).then(
@@ -64,13 +45,11 @@ const deleteItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        res.status(notFoundStatusCode).send({ message: "Document not found" });
+        next(new Error("Document not found"));
       } else if (err.name === "CastError") {
-        res.status(badRequestStatusCode).send({ message: "Invalid data" });
+        next(new Error("Invalid data"));
       } else {
-        res
-          .status(internalServerStatusCode)
-          .send({ message: "An error has occurred on the server" });
+        next(err);
       }
     });
 };
@@ -84,11 +63,11 @@ const likeItem = async (req, res) => {
     const fullItem = await ClothingItem.findById(req.params.itemId).lean();
 
     if (!fullItem) {
-      return res.status(404).send({ message: "Item not found" });
+      next(new Error("Item not found"));
     }
     res.send(fullItem);
   } catch (err) {
-    res.status(500).send({ message: "Failed to like item", error: err });
+    next(new Error("Failed to like item"));
   }
 };
 
@@ -101,11 +80,11 @@ const dislikeItem = async (req, res) => {
     const fullItem = await ClothingItem.findById(req.params.itemId).lean();
 
     if (!fullItem) {
-      return res.status(404).send({ message: "Item not found" });
+      next(new Error("Item not found"));
     }
     res.send(fullItem);
   } catch (err) {
-    res.status(500).send({ message: "Failed to like item", error: err });
+    next(new Error("Failed to like item"));
   }
 };
 
