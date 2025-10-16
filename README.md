@@ -24,5 +24,7 @@ Validator
 Nodemon
 Jest
 Joi
+Winston
+Google Cloud Platform (for deployment)
 
 https://github.com/DariusAugustRead/se_project_express.git
