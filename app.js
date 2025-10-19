@@ -7,11 +7,13 @@ const errorHandler = require("./middlewares/error-handler");
 const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+
 const app = express();
 const { PORT = 3001 } = process.env;
 
-const swaggerJsdoc = require("swagger-jsdoc");
-const swaggerUi = require("swagger-ui-express");
+require("dotenv").config();
 
 const options = {
   definition: {
