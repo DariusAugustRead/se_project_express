@@ -39,7 +39,7 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.js"], // adjust if you want to include models or controllers
+  apis: ["./routes/*.js"],
 };
 
 const specs = swaggerJsdoc(options);
