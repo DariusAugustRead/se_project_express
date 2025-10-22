@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const secretKey = require("../utils/config");
+const { JWT_SECRET } = require("../utils/config");
+const secretKey = JWT_SECRET;
 
 const { OK_STATUS_CODE, CREATED_STATUS_CODE } = require("../utils/errors");
 
@@ -9,7 +10,7 @@ const createdStatusCode = CREATED_STATUS_CODE;
 
 const User = require("../models/user");
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   console.log("Incoming signup payload:", req.body);
 
@@ -35,13 +36,13 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        next(new Error("Invalid data"));
+        return next(new Error("Invalid data"));
       }
       next(err);
     });
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
 
   User.findById(_id)
@@ -59,10 +60,10 @@ const getCurrentUser = (req, res) => {
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    next(new Error("Email and password are required"));
+    return next(new Error("Email and password are required"));
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -83,7 +84,7 @@ const logout = (req, res) => {
   return res.status(okStatusCode).send({ message: "Logged out successfully" });
 };
 
-const updateCurrentUser = (req, res) => {
+const updateCurrentUser = (req, res, next) => {
   const { name, avatar } = req.body;
   const { _id } = req.user;
 

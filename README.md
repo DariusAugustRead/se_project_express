@@ -22,9 +22,17 @@ Postman
 MongoDB (Mongoose Database)
 Validator
 Nodemon
+Dot
+Copilot
 Jest
 Joi
 Winston
 Google Cloud Platform (for deployment)
 
-https://github.com/DariusAugustRead/se_project_express.git
+#### Accessing my application
+
+1. Domain name - https://wtwr.home-ip.hu (All three are currently pending)
+
+2. Frontend - https://github.com/DariusAugustRead/se_project_react.git
+
+3. Pitch Video Link - https://drive.google.com/file/d/1TuCFXYBYFhyY7QLiu4WLQ7VNYZe6C8g4/view?usp=drive_link

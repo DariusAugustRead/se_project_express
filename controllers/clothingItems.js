@@ -5,7 +5,7 @@ const createdStatusCode = CREATED_STATUS_CODE;
 
 const ClothingItem = require("../models/clothingItem");
 
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
 
   ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
@@ -21,7 +21,7 @@ const createItem = (req, res) => {
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   console.log("GET /items route hit");
 
   ClothingItem.find({})
@@ -31,7 +31,7 @@ const getItems = (req, res) => {
     });
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   ClothingItem.findById(req.params.itemId)
     .orFail()
     .then((item) => {
@@ -54,7 +54,7 @@ const deleteItem = (req, res) => {
     });
 };
 
-const likeItem = async (req, res) => {
+const likeItem = async (req, res, next) => {
   try {
     await ClothingItem.findByIdAndUpdate(req.params.itemId, {
       $addToSet: { likes: req.user._id },
@@ -71,7 +71,7 @@ const likeItem = async (req, res) => {
   }
 };
 
-const dislikeItem = async (req, res) => {
+const dislikeItem = async (req, res, next) => {
   try {
     await ClothingItem.findByIdAndUpdate(req.params.itemId, {
       $pull: { likes: req.user._id },

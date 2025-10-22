@@ -4,7 +4,7 @@ const okStatusCode = OK_STATUS_CODE;
 
 const ClothingItem = require("../models/clothingItem");
 
-module.exports.likeItem = (req, res) =>
+module.exports.likeItem = (req, res, next) =>
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
@@ -22,7 +22,7 @@ module.exports.likeItem = (req, res) =>
       next(err);
     });
 
-module.exports.dislikeItem = (req, res) =>
+module.exports.dislikeItem = (req, res, next) =>
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },

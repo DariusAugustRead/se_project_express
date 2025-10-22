@@ -65,6 +65,12 @@ app.use(cors());
 app.use(requestLogger);
 app.use("/", mainRouter);
 
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
+
 app.use(errorLogger);
 
 app.use(errors());
