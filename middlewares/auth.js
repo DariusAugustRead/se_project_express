@@ -7,8 +7,6 @@ const unauthorizedStatusCode = UNAUTHORIZED_STATUS_CODE;
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-  console.log("Auth middleware triggered");
-  console.log("Authorization header:", authorization);
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
     return res
@@ -26,7 +24,6 @@ module.exports = (req, res, next) => {
 
     return next();
   } catch (err) {
-    console.error("JWT verification failed:", err.message);
     return res
       .status(unauthorizedStatusCode)
       .send({ message: "Authorization required" });

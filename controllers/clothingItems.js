@@ -13,7 +13,6 @@ const createItem = (req, res, next) => {
       res.status(createdStatusCode).send({ data: item });
     })
     .catch((err) => {
-      console.error("CreateItem error:", err);
       if (err.name === "ValidationError") {
         next(new Error("Invalid data"));
       }
@@ -22,8 +21,6 @@ const createItem = (req, res, next) => {
 };
 
 const getItems = (req, res, next) => {
-  console.log("GET /items route hit");
-
   ClothingItem.find({})
     .then((items) => res.status(okStatusCode).send({ data: items }))
     .catch(() => {
@@ -54,38 +51,42 @@ const deleteItem = (req, res, next) => {
     });
 };
 
-const likeItem = async (req, res, next) => {
-  try {
-    await ClothingItem.findByIdAndUpdate(req.params.itemId, {
-      $addToSet: { likes: req.user._id },
+const likeItem = (req, res, next) =>
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((item) => {
+      if (!item) {
+        return next(new Error("Document not found"));
+      }
+      return res.status(okStatusCode).send({ data: item });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        return next(new Error("Invalid parameter"));
+      }
+      return next(err);
     });
 
-    const fullItem = await ClothingItem.findById(req.params.itemId).lean();
-
-    if (!fullItem) {
-      next(new Error("Item not found"));
-    }
-    res.send(fullItem);
-  } catch (err) {
-    next(new Error("Failed to like item"));
-  }
-};
-
-const dislikeItem = async (req, res, next) => {
-  try {
-    await ClothingItem.findByIdAndUpdate(req.params.itemId, {
-      $pull: { likes: req.user._id },
+const dislikeItem = (req, res, next) =>
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((item) => {
+      if (!item) {
+        return next(new Error("Document not found"));
+      }
+      return res.status(okStatusCode).send({ data: item });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        return next(new Error("Invalid parameter"));
+      }
+      return next(err);
     });
-
-    const fullItem = await ClothingItem.findById(req.params.itemId).lean();
-
-    if (!fullItem) {
-      next(new Error("Item not found"));
-    }
-    res.send(fullItem);
-  } catch (err) {
-    next(new Error("Failed to like item"));
-  }
-};
 
 module.exports = { createItem, getItems, deleteItem, likeItem, dislikeItem };

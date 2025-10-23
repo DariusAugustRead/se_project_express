@@ -8,7 +8,7 @@ const validateURL = (value, helpers) => {
   return helpers.error("string.uri");
 };
 
-validateCardBody = celebrate({
+const validateCardBody = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30).messages({
       "string.min": 'The minimum length of the "name" field is 2',
@@ -22,7 +22,7 @@ validateCardBody = celebrate({
   }),
 });
 
-validateUserBody = celebrate({
+const validateUserBody = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).messages({
       "string.min": 'The minimum length of the "name" field is 2',
@@ -42,7 +42,7 @@ validateUserBody = celebrate({
   }),
 });
 
-validateAuthentication = celebrate({
+const validateAuthentication = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email().messages({
       "string.empty": 'The "email" field must be filled in',
@@ -54,7 +54,7 @@ validateAuthentication = celebrate({
   }),
 });
 
-validateId = celebrate({
+const validateId = celebrate({
   params: Joi.object().keys({
     id: Joi.string().alphanum().length(24).messages({
       "string.length": "ID must be exactly 24 characters",

@@ -5,11 +5,11 @@ const {
   createItem,
   getItems,
   deleteItem,
+  likeItem,
+  dislikeItem,
 } = require("../controllers/clothingItems");
 
-const { likeItem, dislikeItem } = require("../controllers/likes");
-
-console.log("✅ clothingItemsRouter file loaded");
+const { validateCardBody, validateId } = require("../middlewares/validator");
 
 /**
  * @swagger
@@ -50,7 +50,7 @@ router.get("/", getItems);
  *       201:
  *         description: Item created successfully
  */
-router.post("/", auth, createItem);
+router.post("/", auth, validateCardBody, createItem);
 
 /**
  * @swagger
@@ -71,7 +71,7 @@ router.post("/", auth, createItem);
  *       200:
  *         description: Item deleted successfully
  */
-router.delete("/:itemId", auth, deleteItem);
+router.delete("/:itemId", auth, validateId, deleteItem);
 
 /**
  * @swagger
@@ -92,7 +92,7 @@ router.delete("/:itemId", auth, deleteItem);
  *       200:
  *         description: Item liked successfully
  */
-router.put("/:itemId/likes", auth, likeItem);
+router.put("/:itemId/likes", auth, validateId, likeItem);
 
 /**
  * @swagger
@@ -113,12 +113,6 @@ router.put("/:itemId/likes", auth, likeItem);
  *       200:
  *         description: Item disliked successfully
  */
-router.delete("/:itemId/likes", auth, dislikeItem);
-
-router.get("/", getItems);
-router.post("/", auth, createItem);
-router.delete("/:itemId", auth, deleteItem);
-router.put("/:itemId/likes", auth, likeItem);
-router.delete("/:itemId/likes", auth, dislikeItem);
+router.delete("/:itemId/likes", auth, validateId, dislikeItem);
 
 module.exports = router;

@@ -1,14 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const { errors } = require("celebrate");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 const mainRouter = require("./routes/index");
 
 const errorHandler = require("./middlewares/error-handler");
-const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
-
-const swaggerJsdoc = require("swagger-jsdoc");
-const swaggerUi = require("swagger-ui-express");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -53,7 +52,7 @@ app.get("/swagger.json", (req, res) => {
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
   .then(() => {
-    console.log("Connected to DB");
+    // console.log("Connected to DB");
   })
   .catch((err) => {
     console.error(err);
