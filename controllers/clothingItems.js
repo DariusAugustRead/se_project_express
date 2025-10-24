@@ -1,7 +1,9 @@
-const { OK_STATUS_CODE, CREATED_STATUS_CODE } = require("../utils/errors");
-
-const okStatusCode = OK_STATUS_CODE;
-const createdStatusCode = CREATED_STATUS_CODE;
+const { StatusCodes } = require("../utils/statusCodes");
+const {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} = require("../utils/errors/allErrors");
 
 const ClothingItem = require("../models/clothingItem");
 
@@ -10,11 +12,11 @@ const createItem = (req, res, next) => {
 
   ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => {
-      res.status(createdStatusCode).send({ data: item });
+      res.status(StatusCodes.CREATED).send({ data: item });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        next(new Error("Invalid data"));
+        next(new BadRequestError("Invalid data"));
       }
       next(new Error("Error from createItem"));
     });
@@ -22,7 +24,7 @@ const createItem = (req, res, next) => {
 
 const getItems = (req, res, next) => {
   ClothingItem.find({})
-    .then((items) => res.status(okStatusCode).send({ data: items }))
+    .then((items) => res.status(StatusCodes.OK).send({ data: items }))
     .catch(() => {
       next(new Error("Error from getItems"));
     });
@@ -33,18 +35,18 @@ const deleteItem = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== req.user._id) {
-        next(new Error("Forbidden: Your access is not permitted"));
+        next(new ForbiddenError("Forbidden: Your access is not permitted"));
       }
 
       return ClothingItem.findByIdAndDelete(req.params.itemId).then(
-        (deletedItem) => res.status(okStatusCode).send({ data: deletedItem })
+        (deletedItem) => res.status(StatusCodes.OK).send({ data: deletedItem })
       );
     })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        next(new Error("Document not found"));
+        next(new NotFoundError("Document not found"));
       } else if (err.name === "CastError") {
-        next(new Error("Invalid data"));
+        next(new BadRequestError("Invalid data"));
       } else {
         next(err);
       }
@@ -59,13 +61,13 @@ const likeItem = (req, res, next) =>
   )
     .then((item) => {
       if (!item) {
-        return next(new Error("Document not found"));
+        return next(new NotFoundError("Document not found"));
       }
-      return res.status(okStatusCode).send({ data: item });
+      return res.status(StatusCodes.OK).send({ data: item });
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        return next(new Error("Invalid parameter"));
+        return next(new BadRequestError("Invalid parameter"));
       }
       return next(err);
     });
@@ -78,13 +80,13 @@ const dislikeItem = (req, res, next) =>
   )
     .then((item) => {
       if (!item) {
-        return next(new Error("Document not found"));
+        return next(new NotFoundError("Document not found"));
       }
-      return res.status(okStatusCode).send({ data: item });
+      return res.status(StatusCodes.OK).send({ data: item });
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        return next(new Error("Invalid parameter"));
+        return next(new BadRequestError("Invalid parameter"));
       }
       return next(err);
     });

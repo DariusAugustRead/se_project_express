@@ -4,10 +4,12 @@ const { JWT_SECRET } = require("../utils/config");
 
 const secretKey = JWT_SECRET;
 
-const { OK_STATUS_CODE, CREATED_STATUS_CODE } = require("../utils/errors");
-
-const okStatusCode = OK_STATUS_CODE;
-const createdStatusCode = CREATED_STATUS_CODE;
+const { StatusCodes } = require("../utils/statusCodes");
+const {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} = require("../utils/errors/allErrors");
 
 const User = require("../models/user");
 
@@ -15,7 +17,7 @@ const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   if (!email || !password) {
-    next(new Error("Invalid data"));
+    next(new BadRequestError("Invalid data"));
     return;
   }
   bcrypt
@@ -31,12 +33,12 @@ const createUser = (req, res, next) => {
     .then((user) => {
       const userObj = user.toObject();
       delete userObj.password;
-      res.status(createdStatusCode).send(userObj);
+      res.status(StatusCodes.CREATED).send(userObj);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return next(new Error("Invalid data"));
+        return next(new BadRequestError("Invalid data"));
       }
       return next(err);
     });
@@ -48,14 +50,14 @@ const getCurrentUser = (req, res, next) => {
   User.findById(_id)
     .then((user) => {
       if (!user) {
-        return next(new Error("Document not found"));
+        return next(new NotFoundError("Document not found"));
       }
-      return res.status(okStatusCode).send(user);
+      return res.status(StatusCodes.OK).send(user);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return next(new Error("Invalid parameter"));
+        return next(new BadRequestError("Invalid parameter"));
       }
       return next(err);
     });
@@ -74,12 +76,12 @@ const updateCurrentUser = (req, res, next) => {
       if (!updatedUser) {
         return next(new Error("User not found"));
       }
-      return res.status(okStatusCode).send(updatedUser);
+      return res.status(StatusCodes.OK).send(updatedUser);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return next(new Error("Invalid data"));
+        return next(new BadRequestError("Invalid data"));
       }
       return next(err);
     });
@@ -95,18 +97,18 @@ const login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, secretKey, {
         expiresIn: "7d",
       });
-      res.status(okStatusCode).send({ token, user });
+      res.status(StatusCodes.OK).send({ token, user });
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
-        next(new Error("Forbidden: Your access is not permitted"));
+        next(new ForbiddenError("Forbidden: Your access is not permitted"));
       }
       next(err);
     });
 };
 
 const logout = (req, res) =>
-  res.status(okStatusCode).send({ message: "Logged out successfully" });
+  res.status(StatusCodes.OK).send({ message: "Logged out successfully" });
 
 module.exports = {
   getCurrentUser,

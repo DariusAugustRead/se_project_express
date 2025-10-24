@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const { errors } = require("celebrate");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+require("dotenv").config();
 const mainRouter = require("./routes/index");
 
 const errorHandler = require("./middlewares/error-handler");
@@ -12,36 +13,10 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 const app = express();
 const { PORT = 3001 } = process.env;
 
-require("dotenv").config();
+const swaggerOptions = require("./utils/config");
 
-const options = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Your Project API",
-      version: "1.0.0",
-      description:
-        "API documentation for your clothing and user management system",
-    },
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-    },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
-  },
-  apis: ["./routes/*.js"],
-};
+const specs = swaggerJsdoc(swaggerOptions);
 
-const specs = swaggerJsdoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.get("/swagger.json", (req, res) => {
