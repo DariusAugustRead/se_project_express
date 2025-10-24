@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { Errors } = require("../utils/statusCodes");
+const { NotFoundError } = require("../utils/errors/allErrors");
 const { createUser, login } = require("../controllers/users");
 const {
   validateAuthentication,
@@ -16,7 +16,7 @@ router.use("/users", userRouter);
 router.use("/items", clothingItemRouter);
 
 router.use(() => {
-  throw new Errors.NotFoundError("Router not found");
+  throw new NotFoundError("Router not found");
 });
 
 module.exports = router;

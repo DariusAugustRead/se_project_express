@@ -1,4 +1,5 @@
 const { JWT_SECRET = "super-strong-secret" } = process.env;
+const swaggerJsdoc = require("swagger-jsdoc");
 
 const options = {
   definition: {
@@ -27,4 +28,6 @@ const options = {
   apis: ["./routes/*.js"],
 };
 
-module.exports = { JWT_SECRET, options };
+const specs = swaggerJsdoc(options);
+
+module.exports = { JWT_SECRET, specs };

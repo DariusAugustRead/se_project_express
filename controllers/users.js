@@ -7,7 +7,7 @@ const secretKey = JWT_SECRET;
 const { StatusCodes } = require("../utils/statusCodes");
 const {
   BadRequestError,
-  ForbiddenError,
+  UnauthorizedError,
   NotFoundError,
 } = require("../utils/errors/allErrors");
 
@@ -101,7 +101,7 @@ const login = (req, res, next) => {
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
-        next(new ForbiddenError("Forbidden: Your access is not permitted"));
+        next(new UnauthorizedError("Incorrect email or password"));
       }
       next(err);
     });
