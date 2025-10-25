@@ -9,6 +9,7 @@ const {
   BadRequestError,
   UnauthorizedError,
   NotFoundError,
+  ConflictError,
 } = require("../utils/errors/allErrors");
 
 const User = require("../models/user");
@@ -59,6 +60,9 @@ const getCurrentUser = (req, res, next) => {
       if (err.name === "CastError") {
         return next(new BadRequestError("Invalid parameter"));
       }
+      if (err.code === 11000) {
+        return next(new ConflictError("Duplicate email address"));
+      }
       return next(err);
     });
 };
@@ -88,6 +92,8 @@ const updateCurrentUser = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
+  console.log("Login request received:", req.body);
+
   const { email, password } = req.body;
   if (!email || !password) {
     return next(new Error("Email and password are required"));
@@ -100,8 +106,10 @@ const login = (req, res, next) => {
       res.status(StatusCodes.OK).send({ token, user });
     })
     .catch((err) => {
+      console.error("Login error:", err);
+
       if (err.message === "Incorrect email or password") {
-        next(new UnauthorizedError("Incorrect email or password"));
+        return next(new UnauthorizedError("Incorrect email or password"));
       }
       next(err);
     });
