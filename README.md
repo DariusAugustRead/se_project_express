@@ -31,7 +31,7 @@ Google Cloud Platform (for deployment)
 
 #### Accessing my application
 
-1. Domain name - https://wtwr.home-ip.hu (All three are currently pending)
+1. Domain name - https://wear.strangled.net (New domains)
 
 2. Frontend - https://github.com/DariusAugustRead/se_project_react.git
 
